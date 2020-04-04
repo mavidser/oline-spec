@@ -1,0 +1,70 @@
+; Add support for proper strings in value?
+
+main = [oline] *wse
+
+oline = oline-first *oline-else
+
+oline-first = attributes-nonl text [nested-oline]
+oline-else  = attributes text [nested-oline]
+
+nested-oline = begin-suboline *oline-else end-suboline
+
+begin-suboline = wse %x7B  ; { Left curly bracket
+end-suboline   = wse %x7D  ; } Right curly bracket
+
+;; Text
+
+text = single-letter-text / multiple-letter-text
+
+single-letter-text = unescaped-text-char / escaped-text-char
+multiple-letter-text = 1*(single-letter-text) *(wse-char / single-letter-text) 1*(single-letter-text)
+
+unescaped-text-char = %x21-5A
+unescaped-text-char =/ %x5E-7A
+unescaped-text-char =/ %x7C
+unescaped-text-char =/ %x7E
+unescaped-text-char =/ non-ascii
+
+non-ascii           = %x80-D7FF / %xE000-10FFFF
+
+escaped-text-char    = escape escape-text-seq-char
+escape               =  %x5C  ; \ Reverse solidus
+escape-text-seq-char =  %x5B  ; [ Left square bracket
+escape-text-seq-char =/ %x5C  ; \ Reverse solidus
+escape-text-seq-char =/ %x5D  ; ] Right square bracket
+escape-text-seq-char =/ %x7B  ; { Left curly bracket
+escape-text-seq-char =/ %x7D  ; } Right curly bracket
+
+;; Attributes
+
+attributes      = begin-attr [ attr *( attr-separator attr )] end-attr
+attributes-nonl = begin-attr-nonl [ attr *( attr-separator attr )] end-attr
+
+attr  = key [ kv-separator value ]
+key   = ALPHA *(ALPHA / DIGIT / underscore)
+value = *(ALPHA / DIGIT / underscore / hyphen / ws)
+
+begin-attr      = wse %x5B ws          ; [ Left square bracket
+begin-attr-nonl = wse %x5B ws          ; [ Left square bracket
+end-attr        = ws %x5D wse          ; ] Right square bracket
+attr-separator  = ws %x2C ws           ; , Comma
+kv-separator    = ws %x3D ws           ; = Equal
+underscore      = %x5F                 ; _ Underscore
+hyphen          = %x2D                 ; _ Hyphen
+
+;; Whitespaces and Newlines
+
+ws  = *ws-char
+nl  = *nl-char
+wse = *wse-char
+
+ws-char =  %x20  ; Space
+ws-char =/ %x09  ; Horizontal tab
+
+nl-char =  %x0A  ; Line feed or New line
+nl-char =/ %x0D  ; Carriage return
+
+wse-char = ws-char / nl-char
+
+ALPHA = %x41-5A / %x61-7A ; A-Z / a-z
+DIGIT = %x30-39 ; 0-9

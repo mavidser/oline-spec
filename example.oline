@@ -1,0 +1,30 @@
+[] Moving {
+  [] Installations {
+    [x] Assemble table
+    [] Install racks
+    [] Put up curtains {
+      [] Room 1
+      [x] Room 2
+      [x] Living room
+    }
+  }
+  [] Redirect mail
+  [] Buy {
+    [] Rugs
+    [] Lounge chairs
+    [] Bulbs
+  }
+}
+
+[target=2019-12-10] Foo {
+  [x, target=2019-12-10] Bar {
+    [] This is a multiline note
+      It has many lines
+      So many lines
+    [x] Isn't this fun?
+    [] You do have to escape some characters {
+      [] Square brackets look like \[ and \]
+      [] Curly brackets similarly are \{ \}
+    }
+  }
+}
